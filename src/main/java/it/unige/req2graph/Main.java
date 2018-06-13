@@ -1,5 +1,4 @@
-package it.unige.se.ReqAnModel;
-
+package it.unige.req2graph;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package it.unige.se.ReqAnModel;
+package it.unige.req2graph;
 /**
  * Un singolo requisito
  * creato con www.jsonschema2pojo.org

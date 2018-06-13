@@ -1,0 +1,3 @@
+rootProject.name = 'Req2Graph'
+
+include 'snl2fl'

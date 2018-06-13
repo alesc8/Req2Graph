@@ -1,4 +1,4 @@
-package it.unige.se.ReqAnModel;
+package it.unige.req2graph;
 
 
 import java.util.ArrayList;
@@ -135,7 +135,7 @@ public class Req2Graph {
         	 Generator.combination(entry.getValue())
             	.simple(2)
             	.stream()
-            	.forEach( (r1,  r2) -> { addArc( r1,  r2, entry.getKey());}  );
+            	.forEach( (reqs) -> { addArc( reqs.get(0),  reqs.get(1), entry.getKey());}  );
 
 
         }

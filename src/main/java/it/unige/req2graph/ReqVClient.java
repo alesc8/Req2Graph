@@ -1,7 +1,4 @@
-/**
- * 
- */
-package it.unige.se.ReqAnModel;
+package it.unige.req2graph;
 
 /**
  * @author Alessandro Scotto
