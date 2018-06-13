@@ -32,7 +32,6 @@ public class Req2Graph {
 //	private static List<List<String>> listE = new List<List<String>>();
 	private static Map<String, List<ObjRequirement>> mapVar = new HashMap<String, List<ObjRequirement>>();
 //	private static Map<String,List<String[]>> mapEdge = new HashMap<String,List<String[]>>();
-	private static String newVar;
 //	private static boolean itsok;
 
 
@@ -81,8 +80,7 @@ public class Req2Graph {
 
 		        	Req2Graph.addNode(current);
 
-					for (Iterator<String> h=builder.getSymbolTable().keySet().iterator(); h.hasNext();) {
-						newVar=h.next();
+					for (String newVar: builder.getSymbolTable().keySet()) {
 						System.out.println("VAR: "+newVar+" - req:" +reqName);
 						mapVar.computeIfAbsent(newVar, (x -> new ArrayList<>())).add(current);
 					}
