@@ -20,7 +20,7 @@ public class Main {
 	 	graph.CreateVarMap(requirements);
 	 	
 	 	graph.returnVarGraph();
-	 	graph.returnVarGraph2();
+	 	//graph.returnVarGraph2();
 	 	
 		System.out.println("requisito tt: "+requirements.get(1).getText());
 		System.out.println("Fine elaborazione");
