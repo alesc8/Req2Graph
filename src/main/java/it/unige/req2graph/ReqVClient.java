@@ -28,7 +28,7 @@ public class ReqVClient {
 	private static String bearerToken;
 	private static final MediaType JSON
 		= MediaType.parse("application/json; charset=utf-8");
-	private static final String URL_BASE ="shttp://reqv.vuotto.tech/api/";
+	private static final String URL_BASE ="https://reqv.vuotto.tech/api/";
 	private static List<Project> projects;
 	public static List<ObjRequirement> requirements;
 	public static String inputJson;
