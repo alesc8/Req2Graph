@@ -1,5 +1,9 @@
 package it.unige.req2graph;
 
+/**
+ * @author Alessandro Scotto
+ *
+ */ 
 
 import java.util.ArrayList;
 
@@ -24,9 +28,9 @@ import snl2fl.req.parser.RequirementsBuilder;
 
 public class Req2Graph {
 
-	private static Pseudograph<Node, DefaultEdge> pseudograph = new Pseudograph<Node, DefaultEdge>(LabelEdge.class) ;
+	private static Pseudograph<ObjRequirement, DefaultEdge> pseudograph = new Pseudograph<ObjRequirement, DefaultEdge>(LabelEdge.class) ;
 //
-	private static Multigraph<Node, DefaultEdge> graph = new Multigraph<Node, DefaultEdge>(LabelEdge.class) ;
+	private static Multigraph<ObjRequirement, DefaultEdge> multigraph = new Multigraph<ObjRequirement, DefaultEdge>(LabelEdge.class) ;
 //	private static Stream a =new Stream();
 	private static List<ObjRequirement > reqNotCompliant = new LinkedList<ObjRequirement>();
 //	private static List<List<String>> listE = new List<List<String>>();
@@ -36,16 +40,22 @@ public class Req2Graph {
 
 
 	public static void addNode(ObjRequirement r1){
-		Node a=new Node(r1);
-		graph.addVertex(a);
-		pseudograph.addVertex(a);
+		multigraph.addVertex(r1);
+		pseudograph.addVertex(r1);
+		System.out.println("Aggiunto nodo: "+r1.getId());
 	}
+	
 	public static void addArc(ObjRequirement r1, ObjRequirement r2, String variableName) {
 	    LabelEdge e = new LabelEdge(variableName);
-	    Node v1= new Node(r1);
-	    Node v2= new Node(r2);
-	    graph.addEdge(v1, v2, e);
-	    pseudograph.addEdge(v1,v2, e);
+	    multigraph.addEdge(r1, r2, e);
+	    pseudograph.addEdge(r1,r2, e);
+		System.out.println("Aggiunto arco: "+e+ " tra - "+ r1.getId()+" e - "+r2.getId());
+	}
+	
+	public static void addArc(ObjRequirement r1,  String variableName) {
+	    LabelEdge e = new LabelEdge(variableName);
+	    pseudograph.addEdge(r1,r1, e);
+		System.out.println("Aggiunto arco: "+e+ " tra - "+ r1.getId()+" e - "+r1.getId());
 	}
 
 	public static void CreateVarMap(List<ObjRequirement> input) {
@@ -108,10 +118,6 @@ public class Req2Graph {
 
         while(iterator.hasNext()) {
 
-        	/*
-        	 * Qui inserisco i nodi nel grafo
-        	 */
-
             Entry<String, List<ObjRequirement>> entry = iterator.next();
             //Calcolo il numero n di requisiti per quella variabile
             int n=entry.getValue().size();
@@ -121,46 +127,29 @@ public class Req2Graph {
             System.out.println("\nVariabile: "  + entry.getKey()
                     + "\nListarequisiti: " + entry.getKey() + ":");
 
-            for(ObjRequirement value : entry.getValue()) {
+/*          Visualizza tutti gli ObjRequirement associati a quella variabile... 
+  			for(ObjRequirement value : entry.getValue()) {
                 System.out.println("\t\t\t\t" + value);
-
             }
+            //... e le relative combinazioni
             Generator.combination(entry.getValue()).simple(2).stream().forEach(System.out::println);
 
-            /*
-        	 * Qui inserisco gli archi nel grafo
-             */
+*/
+            //Qui inserisco gli archi nel grafo
         	 Generator.combination(entry.getValue())
             	.simple(2)
             	.stream()
             	.forEach( (reqs) -> { addArc( reqs.get(0),  reqs.get(1), entry.getKey());}  );
-
+        	 
+        	 //Inserisco gli archi pseudograph
+             if (n==1){
+             	Req2Graph.addArc(entry.getValue().get(0), entry.getKey());
+             }
 
         }
 	}
-	public void returnVarGraph2(){
-		for(Map.Entry<String, List<ObjRequirement>> entry : mapVar.entrySet()) {
-			String key = entry.getKey();
-			System.out.println("\nVariabile: "  + key
-			                    + "\nListarequisiti" + key + ":");
-			for (ObjRequirement value : entry.getValue()) {
-				System.out.println("\t\t\t\t" + value);
-			}
-		}
-	}
+	
+	
 
-
-
-	public static void main(String[] args){
-
-		//System.out.println(input.get(1).getText().toString());
-		String[] list = { "a", "b", "c", "d", "e", "f" };
-		for(int i = 0; i < list.length; ++i) {
-			for(int j = i + 1; j < list.length; ++j) {
-				// get requirements i and j } }
-				System.out.println("sequenza " + list[ i] + list[j]);
-			}
-
-		}
-	}
+	
 }
