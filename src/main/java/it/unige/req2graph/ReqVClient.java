@@ -17,7 +17,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-//import snl2fl.req.requirements.Requirement;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -132,8 +131,6 @@ public class ReqVClient {
 		requirements=example.getRequirements(bearerToken, "813");		
 		System.out.println("requisito: "+requirements.get(1).getText());
 
-	 //	Req2Graph graph=new Req2Graph();
-	// 	graph.CreateVarMap(requirements);
 		
     
   }

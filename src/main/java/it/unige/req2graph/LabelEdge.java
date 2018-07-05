@@ -1,4 +1,5 @@
 package it.unige.req2graph;
+import org.jgrapht.io.ComponentNameProvider;
 /**
  * Un singolo arco con etichetta del grafo 
  * @author Alessandro Scotto
@@ -7,7 +8,7 @@ package it.unige.req2graph;
 
 import org.jgrapht.graph.DefaultEdge;
 
-public class LabelEdge<V> extends DefaultEdge {
+public class LabelEdge extends DefaultEdge {
     private ObjRequirement v1;
     private ObjRequirement v2;
     private String label;
@@ -35,3 +36,21 @@ public class LabelEdge<V> extends DefaultEdge {
         return label;
     }	
 }
+
+class EdgeNameProvider implements ComponentNameProvider<LabelEdge>
+{
+	public String getName(LabelEdge label)
+	{
+		return label.toString();
+	}
+}
+
+class VertexNameProvider implements ComponentNameProvider<ObjRequirement>
+{
+	public String getName(ObjRequirement req)
+	{
+		return req.getId().toString();
+	}
+}
+
+
