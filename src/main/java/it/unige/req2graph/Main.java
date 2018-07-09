@@ -1,6 +1,7 @@
 package it.unige.req2graph;
 
 import java.util.List;
+import java.util.Set;
 
 
 public class Main {
@@ -23,6 +24,26 @@ public class Main {
 
 	 	graph.exportMultiGraph();
 	 	graph.exportPseudoGraph();
+	 	
+	 // stampa true o false se è connesso
+	 	System.out.println("Is connected?: " + graph.isConnected());
+
+	 	// ottiene la lista dei set
+	 	List<Set<ObjRequirement>> connectedSet = graph.getConnectedSet();
+
+	 	// per ogni set i-esimo della lista
+	 	for(int i=0; i<connectedSet.size(); i++)
+	 	{
+
+	 		System.out.println("set " + i);
+	 		 
+	 	        // stampa l'id di ogni nodo all'interno del set
+	 		for(ObjRequirement v : connectedSet.get(i))
+	 		 {
+	 			System.out.print(v.getId() + "; ");
+	 		}
+	 	}
+
 	 	
 		System.out.println("Fine elaborazione");
 		

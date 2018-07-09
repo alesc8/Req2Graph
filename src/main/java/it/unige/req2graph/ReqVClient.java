@@ -3,6 +3,8 @@ package it.unige.req2graph;
 /**
  * @author Alessandro Scotto
  *
+ * Questa classe si occupa di accreditarsi su un sito web
+ * e di ottenere una lista di oggetti requisito in formato json
  */
 
 import java.io.IOException;
@@ -34,6 +36,14 @@ public class ReqVClient {
 
 	OkHttpClient client = new OkHttpClient();
 
+	/**
+	 * UserLogin è una funzione che ritorna un Bearer token se 
+	 * l'autenticazione è andata a buon fine
+	 * @param username username
+	 * @param password password
+	 * @return Authorization sottoforma di token
+	 * @throws IOException
+	 */
 	public String UserLogin (String username, String password) throws IOException{
 		Map<String, String> params = new HashMap<String, String>();
 	    params.put("username", username);
@@ -57,7 +67,14 @@ public class ReqVClient {
 	return null;
 	}
   
-
+	/**
+	 * Procedura che ritorna la lista dei progetti in uso 
+	 * allo specifico utente
+	 * 
+	 * @param userToken
+	 * @return List<Project> Lista progetti
+	 * @throws Exception
+	 */
 	public List<Project> getProjects(String userToken)throws Exception {
 		
 		if (userToken==null){
@@ -71,9 +88,7 @@ public class ReqVClient {
 
 		try {
 		    Response response = client.newCall(request).execute();
-		    inputJson=response.body().string();
-		    System.out.println("t: "+ response.message().toString());
-		    System.out.println("u: "+ inputJson);
+		    inputJson=response.body().string(); 
 		    ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 			listP= mapper.readValue(inputJson, mapper.getTypeFactory().constructCollectionType(List.class, Project.class));
@@ -90,6 +105,14 @@ public class ReqVClient {
 		}
 		return listP; 
 	}
+	
+	/**
+	 * Procedura che ritorna tutti gli oggetti requisito legati allo specifico progetto
+	 * @param userToken autorizzazione
+	 * @param idProject id del progetto
+	 * @return List<ObjRequirement> lista degli oggetti requisito
+	 * @throws IOException
+	 */
 	public List<ObjRequirement> getRequirements(String userToken,String idProject) throws IOException{
 		if (userToken==null){
 			return null;
@@ -115,21 +138,17 @@ public class ReqVClient {
 		return listR; 
 			
 	}
-
-	
-	
-	
-	
-	
-	
+		
 	public static void main(String[] args) throws Exception {
 
+		/* Esempio d'uso
 		ReqVClient example =new ReqVClient();  
 		bearerToken=example.UserLogin("Alessandro", "Scotto2018");
 		System.out.println(bearerToken);
 		projects=example.getProjects(bearerToken);
 		requirements=example.getRequirements(bearerToken, "813");		
 		System.out.println("requisito: "+requirements.get(1).getText());
+		*/
 
 		
     

@@ -4,6 +4,11 @@ package it.unige.req2graph;
 /**
  * @author Alessandro Scotto
  *
+ * Questa classe si occupa della costruzione del grafo a partire dai requisiti,
+ * di esportare il grafo in formato .dot e di fare l'analisi del grafo
+ * I tipi di grafo disponibili sono due, multigrafo e pseudografo
+ * ReqNotCompliant è una lista di oggetto requisito definbiti "Not Compliant"
+ * 
  */ 
 
 import java.io.FileWriter;
@@ -38,42 +43,61 @@ public class Req2Graph {
 	private static Map<String, List<ObjRequirement>> mapVar = new HashMap<String, List<ObjRequirement>>();
 
 
+	/**
+	 * Questo metodo si occupa di aggiungere un nodo al grafo
+	 * 	 * @param r1 nodo da aggiungere
+	 */
 	public static void addNode(ObjRequirement r1){
 		multigraph.addVertex(r1);
 		pseudograph.addVertex(r1);
-		//System.out.println("Aggiunto nodo: "+r1.getId());
 	}
 	
+	/**
+	 * Questo metodo si occupa di aggiungere un arco al grafo. Tale arco congiunge due nodi
+	 * e l'etichetta è pari al valore della variabile
+	 * @param r1 Nodo r1
+	 * @param r2 Nodo r2
+	 * @param variableName etichetta dell'arco
+	 */
 	public static void addArc(ObjRequirement r1, ObjRequirement r2, String variableName) {
 	    LabelEdge e = new LabelEdge(variableName);
 	    multigraph.addEdge(r1, r2, e);
 	    pseudograph.addEdge(r1,r2, e);
-		//System.out.println("Aggiunto arco: "+e+ " tra - "+ r1.getId()+" e - "+r2.getId());
 	}
 	
+	/**
+	 * Questo metodo si occupa di aggiungere un arco al grafo nel caso i due nodi coincidano.
+	 * L'etichetta è pari al valore della variabile
+	 * @param r1 Nodo r1
+	 * @param variableName etichettta dell1arco
+	 */
 	public static void addArc(ObjRequirement r1,  String variableName) {
 	    LabelEdge e = new LabelEdge(variableName);
 	    pseudograph.addEdge(r1,r1, e);
 		//System.out.println("Aggiunto arco: "+e+ " tra - "+ r1.getId()+" e - "+r1.getId());
 	}
 
+	/**
+	 * Metodo che crea una map in cui per ogni variabile estrapolata da tutti i requisiti,
+	 * si associano i requisiti corrispondenti, ovvero i nodi
+	 * @param input flusso di dati in json
+	 */
 	public static void CreateVarMap(List<ObjRequirement> input) {
 
 		try{
-
 		 ListIterator<ObjRequirement> litr = input.listIterator();
-			System.out.println( "litr next: "+litr.nextIndex());
-			System.out.println( "litr previous: "+litr.previousIndex());
+			//System.out.println( "litr next: "+litr.nextIndex());
+			//System.out.println( "litr previous: "+litr.previousIndex());
 
 		    while(litr.hasNext())   //In forward direction
 		    {
 		    	ObjRequirement current= litr.next();
 		    	String reqName= current.getId().toString();
-				System.out.println( "reqname: "+reqName);
+				//System.out.println( "reqname: "+reqName);
 		    	String reqState=current.getState();
-				System.out.println( "state: "+reqState);
+				//System.out.println( "state: "+reqState);
 		    	String reqtoParse=current.getText();
-		    	System.out.println(reqName +" - " +reqtoParse);
+		    	//System.out.println(reqName +" - " +reqtoParse);
 				//Prima di tutto costruisco l'oggetto parser:
 				Snl2FlParser parser = new Snl2FlParser();
 				//poi, gli passo lo stream di input, requisito
@@ -85,7 +109,7 @@ public class Req2Graph {
 
 				if (reqState.equals("COMPLIANT") ){
 					
-					//System.out.println( "compliant");
+					//System.out.println( "compliant"); 
 
 		        	Req2Graph.addNode(current);
 
@@ -106,6 +130,9 @@ public class Req2Graph {
 
 	}
 
+	/**
+	 * Metodo checrea il grafo 
+	 */
 	public void returnVarGraph(){
 
 		// get entrySet() into Set
@@ -143,6 +170,9 @@ public class Req2Graph {
 	
 	
 
+	/**
+	 * Metodo che esporta il multigrafo in un file con estensione dot
+	 */
 	static public void exportMultiGraph(){
 		
 	    DOTExporter<ObjRequirement, LabelEdge> export = new DOTExporter<ObjRequirement, LabelEdge>(new VertexNameProvider(), null, new EdgeNameProvider());
@@ -153,6 +183,10 @@ public class Req2Graph {
 	    
 	} 
 
+
+	/**
+	 * Metodo che esporta lo pseudografo in un file con estensione dot
+	 */
 	static public void exportPseudoGraph(){
 		
 	    DOTExporter<ObjRequirement, LabelEdge> export = new DOTExporter<ObjRequirement, LabelEdge>(new VertexNameProvider(), null, new EdgeNameProvider());
@@ -162,4 +196,29 @@ public class Req2Graph {
 	    }catch (IOException e){}
 	    
 	} 
+	
+	/**
+	 * Metodo che usa un connectivityInspector per calcolare se il grafo è connesso oppure no
+	 * @return vero o falso
+	 */
+	public static boolean isConnected() {
+
+		org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge> inspector = new org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge>(multigraph);
+					
+			return inspector.isConnected();
+				
+	}
+
+	/**
+	 * Metodo che usa un connectivityInspector per calcolare se il grafo è connesso oppure no
+	 * @return lista dei Set dei vertici massimamente connessi
+	 */
+	public static List<Set<ObjRequirement>> getConnectedSet() {
+		org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge> inspector = new org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge>(multigraph);
+					
+			return inspector.connectedSets();
+	}
+
+
+
 }
