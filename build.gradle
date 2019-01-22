@@ -1,0 +1,26 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+group = 'it.unige'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+mainClassName = 'it.unige.req2graph.Main'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile('com.squareup.okhttp3:okhttp:3.10.0')
+    compile('com.fasterxml.jackson.core:jackson-databind:2.0.1')
+    compile('org.jgrapht:jgrapht-core:1.2.0')
+    compile('org.jgrapht:jgrapht-io:1.2.0')
+    compile('com.github.dpaukov:combinatoricslib3:3.3.0')
+    compile project(':snl2fl')
+    testCompile('org.junit.jupiter:junit-jupiter-api:5.2.0')
+    testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+}
+
