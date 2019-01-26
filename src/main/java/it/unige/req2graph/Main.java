@@ -1,7 +1,9 @@
+
+
 package it.unige.req2graph;
 
-import java.util.List;
-import java.util.Set;
+
+import java.util.List; 
 
 
 public class Main {
@@ -11,42 +13,30 @@ public class Main {
 		ReqVClient example =new ReqVClient();  
 		String bearerToken=example.UserLogin("Alessandro", "Scotto2018");
 		System.out.println(bearerToken);
-		List<Project> projects=example.getProjects(bearerToken);
+		List<Project> listProjects=example.getProjects(bearerToken);
+		System.out.println("Nel sistema sono presenti i seguenti Id Project: " );
+
+		// visualizza gli Id progetto
+		for(Project list : listProjects) {
+			System.out.println(list.getId().toString()+";");
+		}
+		
 		//List<ObjRequirement> requirements =example.getRequirements(bearerToken, "813");		
-		List<ObjRequirement> requirements =example.getRequirements(bearerToken, "649");		
+		List<ObjRequirement> requirements =example.getRequirements(bearerToken, "5");		
 		//System.out.println("requisito tt: "+requirements.get(1).getText());
 		System.out.println("inizio graph");
 		
 	 	Req2Graph graph=new Req2Graph();
-	 	graph.CreateVarMap(requirements);
+	 	Req2Graph.CreateVarMap(requirements);
 	 	
 	 	graph.returnVarGraph();
 
-	 	graph.exportMultiGraph();
-	 	graph.exportPseudoGraph();
+	 	Req2Graph.exportMultiGraph();
+	 	Req2Graph.exportPseudoGraph();
 	 	
-	 // stampa true o false se è connesso
-	 	System.out.println("Is connected?: " + graph.isConnected());
-
-	 	// ottiene la lista dei set
-	 	List<Set<ObjRequirement>> connectedSet = graph.getConnectedSet();
-
-	 	// per ogni set i-esimo della lista
-	 	for(int i=0; i<connectedSet.size(); i++)
-	 	{
-
-	 		System.out.println("set " + i);
-	 		 
-	 	        // stampa l'id di ogni nodo all'interno del set
-	 		for(ObjRequirement v : connectedSet.get(i))
-	 		 {
-	 			System.out.print(v.getId() + "; ");
-	 		}
-	 	}
-
-	 	
-		System.out.println("Fine elaborazione");
-		
+	 
+		graph.AnalyzeGraph();
+		System.out.println(Req2Graph.getReport());
 		
 		
     

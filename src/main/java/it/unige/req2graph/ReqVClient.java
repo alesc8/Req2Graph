@@ -26,14 +26,57 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class ReqVClient {
+
+    private final static ReqVClient instance = new ReqVClient();
 	private static String bearerToken;
 	private static final MediaType JSON
 		= MediaType.parse("application/json; charset=utf-8");
-	private static final String URL_BASE ="https://reqv.vuotto.tech/api/";
-	private static List<Project> projects;
+	private static final String URL_BASE ="https://reqv.sagelab.it/api/";
+//	private static List<Project> projects;
 	public static List<ObjRequirement> requirements;
+	private static List<ObjRequirement> requirementsList;
 	public static String inputJson;
-
+	
+	/**
+	 * Getter
+	 * @return bearerToken
+	 */
+	public static String getBearerToken() {
+		return bearerToken;
+	}
+	
+	/**
+	 * Setter
+	 * @param bearerToken String Authorization
+	 */
+	public static void setBearerToken(String bearerToken) {
+		ReqVClient.bearerToken = bearerToken;
+	}
+	
+	/**
+	 * Getter
+	 * @return requirementsList
+	 */
+	public static List<ObjRequirement> getRequirementsList() {
+		return requirementsList;
+	}
+	
+	/**
+	 * Setter
+	 * @param requirementsList lista dei requisiti 
+	 */
+	public static void setRequirementsList(List<ObjRequirement> requirementsList) {
+		ReqVClient.requirementsList = requirementsList;
+	}
+	
+	/**
+	 * Getter
+	 * @return instance of ReqVClient
+	 */
+	public static ReqVClient getInstance() {
+        return instance;
+	}
+	
 	OkHttpClient client = new OkHttpClient();
 
 	/**
@@ -42,7 +85,7 @@ public class ReqVClient {
 	 * @param username username
 	 * @param password password
 	 * @return Authorization sottoforma di token
-	 * @throws IOException
+	 * @throws IOException in presenza di un errore I/O
 	 */
 	public String UserLogin (String username, String password) throws IOException{
 		Map<String, String> params = new HashMap<String, String>();
@@ -71,9 +114,9 @@ public class ReqVClient {
 	 * Procedura che ritorna la lista dei progetti in uso 
 	 * allo specifico utente
 	 * 
-	 * @param userToken
-	 * @return List<Project> Lista progetti
-	 * @throws Exception
+	 * @param userToken di autorizzazione
+	 * @return lista di progetti 
+	 * @throws Exception in presenza di errore generico
 	 */
 	public List<Project> getProjects(String userToken)throws Exception {
 		
@@ -89,6 +132,8 @@ public class ReqVClient {
 		try {
 		    Response response = client.newCall(request).execute();
 		    inputJson=response.body().string(); 
+		    //System.out.println("t: "+ response.message().toString());
+		    //System.out.println("u: "+ inputJson);
 		    ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 			listP= mapper.readValue(inputJson, mapper.getTypeFactory().constructCollectionType(List.class, Project.class));
@@ -110,8 +155,8 @@ public class ReqVClient {
 	 * Procedura che ritorna tutti gli oggetti requisito legati allo specifico progetto
 	 * @param userToken autorizzazione
 	 * @param idProject id del progetto
-	 * @return List<ObjRequirement> lista degli oggetti requisito
-	 * @throws IOException
+	 * @return lista degli oggetti requisito
+	 * @throws IOException in presenza di un errore I/O
 	 */
 	public List<ObjRequirement> getRequirements(String userToken,String idProject) throws IOException{
 		if (userToken==null){
@@ -126,10 +171,11 @@ public class ReqVClient {
 	    try {
 	    	Response response = client.newCall(request).execute();
 	    	inputJson=response.body().string();
-	    	System.out.println("q: "+ response.message().toString());
-	    	System.out.println("r: "+ inputJson);
+	    	//System.out.println("q: "+ response.message().toString());
+	    	//System.out.println("r: "+ inputJson);
 	    	ObjectMapper mapper = new ObjectMapper();
 			listR= mapper.readValue(inputJson, mapper.getTypeFactory().constructCollectionType(List.class, ObjRequirement.class));
+			setRequirementsList(requirements);
 	      
 	    }catch (IOException e) {
 			e.printStackTrace();
@@ -139,18 +185,5 @@ public class ReqVClient {
 			
 	}
 		
-	public static void main(String[] args) throws Exception {
-
-		/* Esempio d'uso
-		ReqVClient example =new ReqVClient();  
-		bearerToken=example.UserLogin("Alessandro", "Scotto2018");
-		System.out.println(bearerToken);
-		projects=example.getProjects(bearerToken);
-		requirements=example.getRequirements(bearerToken, "813");		
-		System.out.println("requisito: "+requirements.get(1).getText());
-		*/
-
-		
-    
-  }
+	
 }

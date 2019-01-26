@@ -13,7 +13,6 @@ package it.unige.req2graph;
 
 import java.io.FileWriter;
 import java.io.IOException;
-
 import java.util.ArrayList;
 
 import java.util.HashMap;
@@ -25,8 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
-
+//import org.jgrapht.Graph;
 import org.jgrapht.graph.Multigraph;
 import org.jgrapht.graph.Pseudograph;
 import org.jgrapht.io.DOTExporter;
@@ -40,12 +38,32 @@ public class Req2Graph {
 	private static Pseudograph<ObjRequirement, LabelEdge> pseudograph = new Pseudograph<ObjRequirement, LabelEdge>(LabelEdge.class) ;
 	private static Multigraph<ObjRequirement, LabelEdge> multigraph = new Multigraph<ObjRequirement, LabelEdge>(LabelEdge.class) ;
 	private static List<ObjRequirement > reqNotCompliant = new LinkedList<ObjRequirement>();
+	private static List<ObjRequirement > reqCompliant = new LinkedList<ObjRequirement>();
 	private static Map<String, List<ObjRequirement>> mapVar = new HashMap<String, List<ObjRequirement>>();
+	private static List<String> loop = new LinkedList<String>();
+	private static String report;
+	private static Integer degreeMax;
 
+
+	
+
+	/**
+	 * @return the report
+	 */
+	public static String getReport() {
+		return report;
+	}
+
+	/**
+	 * @param report the report to set
+	 */
+	public static void setReport(String report) {
+		Req2Graph.report = report;
+	}
 
 	/**
 	 * Questo metodo si occupa di aggiungere un nodo al grafo
-	 * 	 * @param r1 nodo da aggiungere
+	 * @param r1 nodo da aggiungere
 	 */
 	public static void addNode(ObjRequirement r1){
 		multigraph.addVertex(r1);
@@ -66,7 +84,7 @@ public class Req2Graph {
 	}
 	
 	/**
-	 * Questo metodo si occupa di aggiungere un arco al grafo nel caso i due nodi coincidano.
+	 * Questo metodo si occupa di aggiungere un arco al grafo pseudografo nel caso i due nodi coincidano.
 	 * L'etichetta è pari al valore della variabile
 	 * @param r1 Nodo r1
 	 * @param variableName etichettta dell1arco
@@ -84,7 +102,20 @@ public class Req2Graph {
 	 */
 	public static void CreateVarMap(List<ObjRequirement> input) {
 
+		//Inizializza le variabili
+		clearGraph(pseudograph);	
+		clearGraph(multigraph);	
+		reqCompliant.clear();
+		reqNotCompliant.clear();
+	    setReqCompliant(reqCompliant);
+	    setReqNotCompliant(reqNotCompliant);
+	    setReport(null);
+	    mapVar.clear();
+	    loop.clear();
+	    degreeMax=0;
+
 		try{
+			//System.out.println( "litr: ");
 		 ListIterator<ObjRequirement> litr = input.listIterator();
 			//System.out.println( "litr next: "+litr.nextIndex());
 			//System.out.println( "litr previous: "+litr.previousIndex());
@@ -92,46 +123,84 @@ public class Req2Graph {
 		    while(litr.hasNext())   //In forward direction
 		    {
 		    	ObjRequirement current= litr.next();
-		    	String reqName= current.getId().toString();
+		    //	String reqName= current.getId().toString();
 				//System.out.println( "reqname: "+reqName);
 		    	String reqState=current.getState();
 				//System.out.println( "state: "+reqState);
 		    	String reqtoParse=current.getText();
-		    	//System.out.println(reqName +" - " +reqtoParse);
-				//Prima di tutto costruisco l'oggetto parser:
-				Snl2FlParser parser = new Snl2FlParser();
-				//poi, gli passo lo stream di input, requisito
-				 parser.parseString(reqtoParse);
-				//ottengo l'oggetto RequirementsBuilder che è utilizzato internamente per fare la traduzione:
-				RequirementsBuilder builder=parser.getBuilder();
-
-				//System.out.println( "builder: "+builder.getRequirementList().size());
 
 				if (reqState.equals("COMPLIANT") ){
-					
+
+			    	//System.out.println(reqName +" - " +reqtoParse);
+					//Prima di tutto costruisco l'oggetto parser:
+					Snl2FlParser parser = new Snl2FlParser();
+					//poi, gli passo lo stream di input, requisito
+					 parser.parseString(reqtoParse);
+					//ottengo l'oggetto RequirementsBuilder che è utilizzato internamente per fare la traduzione:
+					RequirementsBuilder builder=parser.getBuilder();
+
+					//System.out.println( "builder: "+builder.getRequirementList().size());
 					//System.out.println( "compliant"); 
+					reqCompliant.add(current);
 
 		        	Req2Graph.addNode(current);
 
 					for (String newVar: builder.getSymbolTable().keySet()) {
-						System.out.println("VAR: "+newVar+" - req:" +reqName);
+						//System.out.println("VAR: "+newVar+" - req:" +reqName);
 						mapVar.computeIfAbsent(newVar, (x -> new ArrayList<>())).add(current);
 					}
 				}else {
 					reqNotCompliant.add(current);
-					System.out.println("not compliant: "+ reqName);
+					//System.out.println("not compliant: "+ reqName);
 				}
 
 		    }
+		    setReqCompliant(reqCompliant);
+		    //System.out.println("set req compliant size: " + reqCompliant.size());
+		    setReqNotCompliant(reqNotCompliant);
+		    //System.out.println("set req NOT compliant size: " + reqNotCompliant.size());
 
 		} catch (Exception e) {
 		    System.err.println("Exception: " + e.getStackTrace());
+		   // System.out.println("Exception: " + e.getStackTrace());
 		}
 
 	}
 
+	
+
 	/**
-	 * Metodo checrea il grafo 
+	 * @return reqNotCompliant
+	 * Lista dei requisiti non conformi che non andranno a comporre il grafo
+	 */
+	public static List<ObjRequirement> getReqNotCompliant() {
+		return reqNotCompliant;
+	}
+
+	/**
+	 * @param reqNotCompliant the reqNotCompliant to set
+	 */
+	public static void setReqNotCompliant(List<ObjRequirement> reqNotCompliant) {
+		Req2Graph.reqNotCompliant = reqNotCompliant;
+	}
+
+	/**
+	 * @return the reqCompliant
+	 * Lista dei requisiti conformi che andranno a comporre il grafo
+	 */
+	public static List<ObjRequirement> getReqCompliant() {
+		return reqCompliant;
+	}
+
+	/**
+	 * @param reqCompliant the reqCompliant to set
+	 */
+	public static void setReqCompliant(List<ObjRequirement> reqCompliant) {
+		Req2Graph.reqCompliant = reqCompliant;
+	}
+
+	/**
+	 * Metodo che crea il grafo 
 	 */
 	public void returnVarGraph(){
 
@@ -147,6 +216,9 @@ public class Req2Graph {
             Entry<String, List<ObjRequirement>> entry = iterator.next();
             //Calcolo il numero n di requisiti per quella variabile
             int n=entry.getValue().size();
+            if (n>degreeMax){
+            	degreeMax=n;
+            }
 
             //System.out.println("\nDimensione array: "+entry.getValue().size());
 
@@ -163,6 +235,9 @@ public class Req2Graph {
         	 //Inserisco gli archi pseudograph
              if (n==1){
              	Req2Graph.addArc(entry.getValue().get(0), entry.getKey());
+             	loop.add(entry.getValue().get(0).getId().toString()+" - "+entry.getKey());
+             	//System.out.println("a "+entry.getValue().get(0).getId());
+             	//System.out.println("b "+entry.getKey());
              }
 
         }
@@ -203,7 +278,7 @@ public class Req2Graph {
 	 */
 	public static boolean isConnected() {
 
-		org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge> inspector = new org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge>(multigraph);
+		org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge> inspector = new org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge>(pseudograph);
 					
 			return inspector.isConnected();
 				
@@ -214,11 +289,130 @@ public class Req2Graph {
 	 * @return lista dei Set dei vertici massimamente connessi
 	 */
 	public static List<Set<ObjRequirement>> getConnectedSet() {
-		org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge> inspector = new org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge>(multigraph);
+		org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge> inspector = new org.jgrapht.alg.connectivity.ConnectivityInspector<ObjRequirement, LabelEdge>(pseudograph);
 					
 			return inspector.connectedSets();
 	}
+	
+	
+
+	/**
+	 * Metodo che crea un report di analisi del grafo pseudografo
+	 */
+	public void AnalyzeGraph(){
+
+		report="";
+		report="Analisi del grafo - Pseudografo."+"\r\n"+"\r\n";
+		//System.out.println("Dimensione getReqCompliant: "+ getReqCompliant().size());
+		if (getReqCompliant().isEmpty()){
+			report=report+"I grafo è vuoto. Non contiene archi e/o nodi. "+"\r\n";
+		}else{
+
+			report=report+"Il grado massimo del grafo è: "+ degreeMax.toString()+"\r\n"+"\r\n";
+			
+			if (isConnected()){
+				report=report+"Il grafo risulta essere connesso"+"\r\n"+"\r\n";			
+			} else{
+				report=report+"Il grafo risulta essere NON connesso"+"\r\n"+"\r\n";
+			}
+			
+
+			report=report+"Set di nodi connessi tra loro."+"\r\n";
+			// ottiene la lista dei set
+			List<Set<ObjRequirement>> connectedSet = getConnectedSet();
+
+			// per ogni set i-esimo della lista
+			for(int i=0; i<connectedSet.size(); i++) {
+
+				report=report+"\r\n"+"Set numero " + (i+1)+":\r\n";
+				 		 
+				 // stampa l'id di ogni nodo all'interno del set
+				 for(ObjRequirement v : connectedSet.get(i)) {
+					 if (v.getState().equals("COMPLIANT")){
+						 report=report+v.getId()+ "; ";
+					 }
+				 }			 
+		    
+			} 
+			if (!getReqNotCompliant().isEmpty()){
+				report=report+"\r\n"+"\r\n"+"I seguenti requisiti non sono conformi " +":\r\n";
+				reqNotCompliant=getReqNotCompliant();
+	 		 
+				// stampa i requisiti non conformi
+				for(ObjRequirement v : reqNotCompliant) {
+					report=report+v.getId().toString()+" "+v.getText()+" "+v.getState()+ "; "+"\r\n";
+				}
+				report=report+"\r\n";
+				
+				
+			}
+			if(!loop.isEmpty()){
+				report=report+"\r\n"+"\r\n"+"Sono presenti coppie 'nodo - arco' che formano i seguenti loop: "+"\r\n";
+
+				for(String s : loop) {
+					report=report+ s+ "; "+"\r\n";
+				}
+				
+				/*
+				Iterator<String> itr= loop.iterator();
 
 
+				while(itr.hasNext())
+					report=report+itr.next()+"\r\n";
+				  System.out.println(itr.next());
+				  */
+			}
+			else{
+				report=report+"\r\n"+"\r\n"+"Non sono prsenti loop nello pseudografo";
+				
+			}
+			report=report+"\r\n";
+			setReport(report);
+			//System.out.println(report);
 
+			
+		}
+	
+	}
+		
+	
+	/**
+	 * Metodo che resetta un grafo Pseudograph, elimina tutti gli archi e tutti i nodi
+	 * @param graph pseudograph
+	 */
+	public static <V, E> void clearGraph(Pseudograph<ObjRequirement, LabelEdge> graph) {
+		
+		 LinkedList<ObjRequirement> copy = new LinkedList<ObjRequirement>();
+	        for (ObjRequirement v : graph.vertexSet()) {
+	            //System.out.println("copiato vertex "+v.getId().toString());
+	                    copy.add(v);
+	        }
+	        graph.removeAllVertices(copy);
+        for (ObjRequirement v : graph.vertexSet()) {
+            //System.out.println("copiato vertex "+v.getId().toString());
+                    copy.add(v);
+        }
+        graph.removeAllVertices(copy);
+        //System.out.println("rimosso tutto ");       
+	}
+	/**
+	 * Metodo che resetta un grafo Multigraph, elimina tutti gli archi e tutti i nodi
+	 * @param graph Multigraph
+	 */
+	public static <V, E> void clearGraph(Multigraph<ObjRequirement, LabelEdge> graph) {
+		
+		 LinkedList<ObjRequirement> copy = new LinkedList<ObjRequirement>();
+	        for (ObjRequirement v : graph.vertexSet()) {
+	            //System.out.println("copiato vertex "+v.getId().toString());
+	                    copy.add(v);
+	        }
+	        graph.removeAllVertices(copy);
+        for (ObjRequirement v : graph.vertexSet()) {
+            //System.out.println("copiato vertex "+v.getId().toString());
+                    copy.add(v);
+        }
+        graph.removeAllVertices(copy);
+        //System.out.println("rimosso tutto ");       
+	}
+	
 }

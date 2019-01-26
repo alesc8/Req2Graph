@@ -127,5 +127,9 @@ public ObjRequirement withAdditionalProperty(String name, Object value) {
 this.additionalProperties.put(name, value);
 return this;
 }
+@Override
+public String toString() {
+    return (this.getId().toString()+" "+this.getText());
+}
 
 }
