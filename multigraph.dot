@@ -1,0 +1,16 @@
+graph G {
+  602;
+  604;
+  605;
+  606;
+  607;
+  608;
+  604 -- 605 [ label="joint1_speed" ];
+  604 -- 606 [ label="joint1_speed" ];
+  604 -- 607 [ label="joint1_speed" ];
+  605 -- 606 [ label="joint1_speed" ];
+  605 -- 607 [ label="joint1_speed" ];
+  606 -- 607 [ label="joint1_speed" ];
+  604 -- 606 [ label="joint2_speed" ];
+  602 -- 608 [ label="joint1_acc" ];
+}
