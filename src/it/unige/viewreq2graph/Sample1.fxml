@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.embed.swing.SwingNode?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+
+<BorderPane prefHeight="634.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.unige.viewreq2graph.Sample1Controller">
+   <top>
+      <Label minHeight="100.0" text="Requirements Analysis" BorderPane.alignment="CENTER">
+         <font>
+            <Font name="System Bold" size="32.0" />
+         </font></Label>
+   </top>
+   <center>
+      <VBox prefHeight="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox prefHeight="50.0">
+               <children>
+                  <Label prefWidth="100.0" text="Projects">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin></Label>
+                  <ComboBox fx:id="cbProject" onAction="#cbProject_OnChange" prefWidth="150.0" promptText="Select Project">
+                  </ComboBox>
+                 
+                  <Button fx:id="btnGetRequirements" mnemonicParsing="false" onAction="#btnGetRequirements_OnClick" text="Get Requirements">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="btnCreateGraph" disable="true" mnemonicParsing="false" onAction="#btnCreateGraph_OnClick" text="Create Graph">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox prefHeight="50.0">
+               <children>
+                  <Label fx:id="lbl1Message" text="lbl1Message">
+                     <HBox.margin>
+                        <Insets left="70.0" top="10.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox prefHeight="380.0">
+               <children>
+                  <AnchorPane prefHeight="380.0" prefWidth="1500.0">
+                     <children>
+                        <SplitPane dividerPositions="0.5" prefHeight="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                            <AnchorPane prefHeight="380.0">
+                                 <children>
+                                    <VBox prefHeight="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <Label text="   Id    Requirement" />
+                                          <ListView fx:id="lwRequirements">
+                                          </ListView>                                          
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                            <AnchorPane prefHeight="380.0">
+                                 <children>
+                                    <VBox prefHeight="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <Label text="      Graph Analysis" />
+                                          <TextArea fx:id="txtAreaGraph" prefHeight="380.0" />                          
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                           <padding>
+                              <Insets left="1.0" right="1.0" />
+                           </padding>
+                        </SplitPane>
+                     </children>
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding>
+                  </AnchorPane>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+   <bottom>
+      <HBox prefHeight="23.0" prefWidth="482.0" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
