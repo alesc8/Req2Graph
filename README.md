@@ -80,6 +80,34 @@ Su Eclipse IDE andare su `File -> Import -> Existing Project into Workspace`, se
 Per eseguire il softare tasto destro sull'icona del progetto, `Run As -> Java Application`, si apirà una finestra con selezionata la voce `Main-it.unige.viewreq2graph` quindi cliccare su `OK`.
 
 
+### Testing
+
+ - **Strutturale**
+ 
+   Il test strutturale è stato eseguito sulle classi `ReqVClient` e `Req2Graph` in quanto sono le uniche classi che hanno procedure e funzioni nel package req2graph, le restanti classi (tutte controller di JavaFX e residenti nel package viewreq2graph) gestiscono l'interazione utente - interfaccia ed utilizzano metodi nativi di Java che non richiedono il testing strutturale.
+   
+   ```
+                                             |-> ReqVClient
+   Utente <--> Interfaccia <--> Controller <-|
+                                             |-> Req2Graph
+   ```
+   Per l'utilizzo delle classi di testing è necessario importarle nel progetto dalla cartella `testing_strutturale` e la libreria `junit:junit:5.0`.
+   Eventali branch non coperti saranno commentati nelle apposite classi di test.
+   
+   Nella cartella `docs` si potrà  trovare un documento word che spiega come testare i vari comportamenti del programma in base alle interazioni dell'utente così da andare a coprire anche le classi non testate.
+
+ - **Funzionale**
+ 
+   Per eseguire il testing funzionale è necessario importare la classe contenuta nella cartella `testing_funzionale` e aggiungere le seguenti librerie:
+   
+   - com.google.guava:guava:14.0.1          ?????????????????????????????????????????
+   - junit:junit:5.0
+   - org.hamcrest:hamcrest-junit:2.0.0.0    ???????????????????????????????????
+   - org.loadui:testFx:3.1.2                ??????????????????????????????????????????
+   - org.testfx:testfx-core:4.0.6-alpha     ?????????????????????????????????
+   - org.testfx:testfx-junit:4.0.6-alpha    ?????????????????????????????????????
+  
+   A questo punto è sufficiente seguire le istruzioni contenute nei commenti delle funzioni di testing.
 
 
 
