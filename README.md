@@ -77,7 +77,7 @@ Per caricare il progetto su Eclipse IDE è necessario clonare il progetto da Git
 Su Eclipse IDE andare su `File -> Import -> Existing Project into Workspace`, selezionare la directory `Req2Graph-master` appena estratta, quindi selezionare `copy projects into workspace` e cliccare su `finish`.
 
 ## Eseguire il Software
-Per eseguire il softare tasto destro sull'icona del progetto, `Run As -> Java Application`, si apirà una finestra con selezionata la voce `Main-it.unige.viewreq2graph` quindi cliccare su 'OK'.
+Per eseguire il softare tasto destro sull'icona del progetto, `Run As -> Java Application`, si apirà una finestra con selezionata la voce `Main-it.unige.viewreq2graph` quindi cliccare su `OK`.
 
 
 
