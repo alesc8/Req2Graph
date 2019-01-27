@@ -1,4 +1,4 @@
-package it.unige.req.testreq2graph;
+package it.unige.testreq2graph;
 
 import static org.junit.Assert.*;
 
